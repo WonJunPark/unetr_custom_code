@@ -220,7 +220,10 @@ with torch.no_grad():
             colors = get_colors(n_classes=3)
 
             img_path = './dataset/wonjun_processing/imagesTr/'
-            img_path2 = img_path + '{:03d}.nii.gz'.format(step + 110)
+            data_file_list = sorted(os.listdir(img_path))
+            data_file_list2 = data_file_list[69:]
+
+            img_path2 = img_path + data_file_list2[step]
             imgs = nib.load(img_path2)
             imgs2 = imgs.get_fdata()
             imgs3 = np.transpose(imgs2, (2, 0, 1))
