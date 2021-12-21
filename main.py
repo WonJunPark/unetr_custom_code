@@ -56,17 +56,17 @@ train_transforms = Compose(
         #    pixdim=(1.5, 1.5 , 2.0),             # 2.0: 원본 , 1.5 : brain smaller
         #    mode=("bilinear", "nearest"),
         #),
-
-        Orientationd(keys=["image", "label"], axcodes="RAS"),
-        ScaleIntensityRanged(
-            keys=["image"],
-            a_min=-175,
-            a_max=250,
-            b_min=0.0,
-            b_max=1.0,
-            clip=True,
-        ),
-        CropForegroundd(keys=["image", "label"], source_key="image"),
+        #
+        # Orientationd(keys=["image", "label"], axcodes="RAS"),
+        # ScaleIntensityRanged(
+        #     keys=["image"],
+        #     a_min=-175,
+        #     a_max=250,
+        #     b_min=0.0,
+        #     b_max=1.0,
+        #     clip=True,
+        # ),
+        # CropForegroundd(keys=["image", "label"], source_key="image"),
         # RandCropByPosNegLabeld(
         #     keys=["image", "label"],
         #     label_key="label",
@@ -77,31 +77,31 @@ train_transforms = Compose(
         #     image_key="image",
         #     image_threshold=0,
         # ),
-        RandFlipd(
-            keys=["image", "label"],
-            spatial_axis=[0],
-            prob=0.10,
-        ),
-        RandFlipd(
-            keys=["image", "label"],
-            spatial_axis=[1],
-            prob=0.10,
-        ),
-        RandFlipd(
-            keys=["image", "label"],
-            spatial_axis=[2],
-            prob=0.10,
-        ),
-        RandRotate90d(
-            keys=["image", "label"],
-            prob=0.10,
-            max_k=3,
-        ),
-        RandShiftIntensityd(
-            keys=["image"],
-            offsets=0.10,
-            prob=0.50,
-        ),
+        # RandFlipd(
+        #     keys=["image", "label"],
+        #     spatial_axis=[0],
+        #     prob=0.10,
+        # ),
+        # RandFlipd(
+        #     keys=["image", "label"],
+        #     spatial_axis=[1],
+        #     prob=0.10,
+        # ),
+        # RandFlipd(
+        #     keys=["image", "label"],
+        #     spatial_axis=[2],
+        #     prob=0.10,
+        # ),
+        # RandRotate90d(
+        #     keys=["image", "label"],
+        #     prob=0.10,
+        #     max_k=3,
+        # ),
+        # RandShiftIntensityd(
+        #     keys=["image"],
+        #     offsets=0.10,
+        #     prob=0.50,
+        # ),
         ToTensord(keys=["image", "label"]),
     ]
 )
@@ -114,11 +114,11 @@ val_transforms = Compose(
         #    pixdim=(1.5, 1.5, 2.0),
         #    mode=("bilinear", "nearest"),
         #),
-        Orientationd(keys=["image", "label"], axcodes="RAS"),
-        ScaleIntensityRanged(
-            keys=["image"], a_min=-175, a_max=250, b_min=0.0, b_max=1.0, clip=True
-        ),
-        CropForegroundd(keys=["image", "label"], source_key="image"),
+        # Orientationd(keys=["image", "label"], axcodes="RAS"),
+        # ScaleIntensityRanged(
+        #     keys=["image"], a_min=-175, a_max=250, b_min=0.0, b_max=1.0, clip=True
+        # ),
+        # CropForegroundd(keys=["image", "label"], source_key="image"),
         #RandCropByPosNegLabeld(
         #            keys=["image", "label"],
         #            label_key="label",
@@ -133,13 +133,14 @@ val_transforms = Compose(
     ]
 )
 
-
 data_dir = './dataset/wonjun_processing/'
-split_JSON = "dataset.json"
+split_JSON = "dataset2.json"
+
 datasets = data_dir + split_JSON
 
 datalist = load_decathlon_datalist(datasets, True, "training")
 val_files = load_decathlon_datalist(datasets, True, "validation")
+
 
 train_ds = CacheDataset(
     data=datalist,
@@ -237,6 +238,7 @@ def train(global_step, train_loader, dice_val_best, global_step_best):
     for step, batch in enumerate(epoch_iterator):
         step += 1
         x, y = (batch["image"].cuda(), batch["label"].cuda())
+
         logit_map = model(x)
         loss = loss_function(logit_map, y)
         loss.backward()
